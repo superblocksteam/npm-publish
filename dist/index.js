@@ -150,19 +150,14 @@ async function main() {
         };
         // Publish to NPM
         let results = await npm_publish_1.npmPublish(options);
-        if (results.type === "none") {
-            console.log(`\n📦 ${results.package} v${results.version} is already published to NPM`);
-        }
-        else if (results.dryRun) {
+        if (results.dryRun) {
             console.log(`\n📦 ${results.package} v${results.version} was NOT actually published to NPM (dry run)`);
         }
         else {
             console.log(`\n📦 Successfully published ${results.package} v${results.version} to NPM`);
         }
         // Set the GitHub Actions output variables
-        core_1.setOutput("type", results.type);
         core_1.setOutput("version", results.version);
-        core_1.setOutput("old-version", results.oldVersion);
         core_1.setOutput("tag", results.tag);
         core_1.setOutput("access", results.access);
         core_1.setOutput("dry-run", results.dryRun);
@@ -2295,7 +2290,6 @@ function inspect() {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.npmPublish = void 0;
-const semver = __webpack_require__(513);
 const normalize_options_1 = __webpack_require__(751);
 const npm_1 = __webpack_require__(62);
 const read_manifest_1 = __webpack_require__(292);
@@ -2306,18 +2300,17 @@ async function npmPublish(opts = {}) {
     let options = normalize_options_1.normalizeOptions(opts);
     // Get the old and new version numbers
     let manifest = await read_manifest_1.readManifest(options.package, options.debug);
-    let publishedVersion = await npm_1.npm.getLatestVersion(manifest.name, options);
-    // Determine if/how the version has changed
-    let diff = semver.diff(manifest.version, publishedVersion);
-    if (diff || !options.checkVersion) {
-        // Publish the new version to NPM
-        await npm_1.npm.publish(manifest, options);
-    }
+    // let publishedVersion = await npm.getLatestVersion(manifest.name, options);
+    // // Determine if/how the version has changed
+    // let diff = semver.diff(manifest.version, publishedVersion);
+    // if (diff || !options.checkVersion) {
+    //   // Publish the new version to NPM
+    //   await npm.publish(manifest, options);
+    // }
+    await npm_1.npm.publish(manifest, options);
     let results = {
         package: manifest.name,
-        type: diff || "none",
         version: manifest.version.raw,
-        oldVersion: publishedVersion.raw,
         tag: options.tag,
         access: options.access || (manifest.name.startsWith("@") ? "restricted" : "public"),
         dryRun: options.dryRun

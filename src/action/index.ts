@@ -27,10 +27,7 @@ async function main(): Promise<void> {
     // Publish to NPM
     let results = await npmPublish(options);
 
-    if (results.type === "none") {
-      console.log(`\n📦 ${results.package} v${results.version} is already published to NPM`);
-    }
-    else if (results.dryRun) {
+    if (results.dryRun) {
       console.log(`\n📦 ${results.package} v${results.version} was NOT actually published to NPM (dry run)`);
     }
     else {
@@ -38,9 +35,7 @@ async function main(): Promise<void> {
     }
 
     // Set the GitHub Actions output variables
-    setOutput("type", results.type);
     setOutput("version", results.version);
-    setOutput("old-version", results.oldVersion);
     setOutput("tag", results.tag);
     setOutput("access", results.access);
     setOutput("dry-run", results.dryRun);

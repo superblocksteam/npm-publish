@@ -34,10 +34,7 @@ export async function main(args: string[]): Promise<void> {
       let results = await npmPublish(options);
 
       if (!options.quiet) {
-        if (results.type === "none") {
-          console.log(`\n📦 ${results.package} v${results.version} is already published to NPM`);
-        }
-        else if (results.dryRun) {
+        if (results.dryRun) {
           console.log(`\n📦 ${results.package} v${results.version} was NOT actually published to NPM (dry run)`);
         }
         else {
